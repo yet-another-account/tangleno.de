@@ -3,11 +3,11 @@ for (table of $(".nodeinfo")) {
   let $table = $(table)
 
   var cont = "<p>"
-  cont += "<b>Sync: </b><span class='sync" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += "<b>Tips: </b><span class='tips" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += "<b>CPU Cores: </b><span class='cpu" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += "<b>RAM Usage: </b><span class='ram" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += "<b>CPU Usage: </b><span class='cputil" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b class='node-data'>Sync: </b><span class='sync" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b class='node-data'>Tips: </b><span class='tips" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b class='node-data'>CPU Cores: </b><span class='cpu" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b class='node-data'>RAM Usage: </b><span class='ram" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b class='node-data'>CPU Usage: </b><span class='cputil" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += '<canvas id="nodecpugraph' + uniqueClass(table.dataset.ip) + '"></canvas>'
   cont += "</p>"
 
