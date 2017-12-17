@@ -1,79 +1,80 @@
-let i = 0
 var charts = {}
 for (table of $(".nodeinfo")) {
-  i++
-  $table = $(table)
-  let iota = new IOTA({
-    provider: table.dataset.ip
-  })
+  let $table = $(table)
 
-  iota.api.getNodeInfo(function(err, res) {
+  var cont = "<p>"
+  cont += "<b>Sync: </b><span class='sync" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b>Tips: </b><span class='tips" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b>CPU Cores: </b><span class='cpu" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b>RAM Utilization: </b><span class='ram" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += '<canvas id="nodecpugraph' + uniqueClass(table.dataset.ip) + '" width="400" height="300"></canvas>'
+  cont += "</p>"
 
-    var cont = "<p class='nodeinfo'>"
-    console.log(res)
-    cont += "<b>Sync: </b><span class='sync" + i + "'>" + res.latestSolidSubtangleMilestoneIndex + " / " + res.latestMilestoneIndex + "</span></br>"
-    cont += "<b>Tips: </b><span class='tips" + i + "''>" + res.tips + "</span></br>"
-    cont += "<b>CPU Cores: </b><span class='cpu'>" + res.jreAvailableProcessors + "</span></br>"
-    cont += "<b>RAM Utilization: </b><span class='ram" + i + "'>" + humanFileSize(res.jreTotalMemory, true) + " / " + humanFileSize(res.jreMaxMemory, true) + "</span></br>"
-    cont += '<canvas id="nodeinfo' + i + '" width="400" height="300"></canvas>'
-    cont += "</p>"
+  $table.html(cont)
 
-    $table.html(cont)
-    var ctx = $("#nodeinfo" + i)
-    updatedata = function(first) {
-      first = !!first
-
-      iota.api.getNodeInfo(function(err, res) {
-        $(".sync" + i).html(res.latestSolidSubtangleMilestoneIndex + " / " + res.latestMilestoneIndex)
-        $(".tips" + i).html(res.tips)
-        $(".ram" + i).html(humanFileSize(res.jreTotalMemory, true) + " / " + humanFileSize(res.jreMaxMemory, true))
-      })
-
-
-      $.getJSON(table.dataset.ip.substring(0, table.dataset.ip.lastIndexOf(":")) + ":14222").done(function(data) {
-        console.log(data)
-
-        if (first) {
-          var chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-              labels: Array.apply(null, Array(data.length)).map(function (_, i) {return i;}),
-              datasets: [{
-                label: "CPU Utilization",
-                data: data
-              }]
-            },
-            options: {
-              scales: {
-                xAxes: [{
-                  display: false
-                }]
-              }
-            }
-          })
-
-          charts[table.dataset.ip] = chart
-        } else {
-          charts[table.dataset.ip].data.labels.push(charts[table.dataset.ip].data
-            .labels[charts[table.dataset.ip].data.labels.length - 1] + 1)
-
-          charts[table.dataset.ip].data.datasets[0]['data'].push(data[data.length - 1])
-          charts[table.dataset.ip].update()
-          charts[table.dataset.ip].data.labels.shift()
-          charts[table.dataset.ip].data.datasets[0]['data'].shift()
-          charts[table.dataset.ip].update()
-
-        }
-
-      })
-    }
-    updatedata(true)
-    setInterval(updatedata, 5000)
-  })
-
-  console.log(table.dataset.ip.substring(0, table.dataset.ip.lastIndexOf(":")) + ":14222")
 
 }
+
+updatedata = function(first) {
+  first = !!first
+
+  for (table of $(".nodeinfo")) {
+    let nodeip = table.dataset.ip
+
+    let iota = new IOTA({
+      provider: nodeip
+    })
+
+    iota.api.getNodeInfo(function(err, res) {
+      $(".sync" + uniqueClass(nodeip)).html(res.latestSolidSubtangleMilestoneIndex + " / " + res.latestMilestoneIndex)
+      $(".tips" + uniqueClass(nodeip)).html(res.tips)
+      $(".cpu" + uniqueClass(nodeip)).html(res.jreAvailableProcessors)
+      $(".ram" + uniqueClass(nodeip)).html(humanFileSize(res.jreTotalMemory, true) + " / " + humanFileSize(res.jreMaxMemory, true))
+    })
+
+
+    console.log(nodeip)
+    $.getJSON(nodeip.substring(0, nodeip.lastIndexOf(":")) + ":14222").done(function(data) {
+
+      if (first) {
+        let ctx = $("#nodecpugraph" + uniqueClass(nodeip))
+        console.log(ctx)
+        let chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: Array.apply(null, Array(data.length)).map(function (_, i) {return i;}),
+            datasets: [{
+              label: "CPU Utilization",
+              data: data
+            }]
+          },
+          options: {
+            scales: {
+              xAxes: [{
+                display: false
+              }]
+            }
+          }
+        })
+
+        charts[nodeip] = chart
+      } else {
+        charts[nodeip].data.labels.push(charts[nodeip].data
+          .labels[charts[nodeip].data.labels.length - 1] + 1)
+
+        charts[nodeip].data.datasets[0]['data'].push(data[data.length - 1])
+        charts[nodeip].update()
+        charts[nodeip].data.labels.shift()
+        charts[nodeip].data.datasets[0]['data'].shift()
+        charts[nodeip].update()
+
+      }
+
+    })
+  }
+}
+updatedata(true)
+setInterval(updatedata, 5000)
 
 function humanFileSize(bytes, si) {
     var thresh = si ? 1000 : 1024;
@@ -89,4 +90,8 @@ function humanFileSize(bytes, si) {
         ++u;
     } while(Math.abs(bytes) >= thresh && u < units.length - 1);
     return bytes.toFixed(2)+' '+units[u];
+}
+
+function uniqueClass(addr) {
+  return addr.replace(/[\W]+/g, "_")
 }
