@@ -1,0 +1,56 @@
+<html>
+<head>
+  <title>TangleNO.DE</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+</head>
+<body>
+  <div class="container">
+    <h1 class="header">
+      Tangle<b>NO</b>.<b>DE</b> IOTA Light Wallet Servers
+    </h1>
+    <h2 class="subheader">
+      A <span class="eukaryote">eukaryote</span> project
+    </h2>
+    <p class="text-center">
+      Running light wallet nodes is expensive! Donate to help keep us online! <br />
+      Current Monthly Operational Cost: <b>$37</b>. All VPS's are paid for entirely in crypto. <br />
+      <small>IOTA: RXHRULEN9WECVFXYKZJKMONCFLZYLZVBQTYX9XTOHMFIMMAF9ACXYUPABAAFQIVJSOD9CFLIAQJT9SX9DIRMDNGFQZ<br />
+      ETH: 0x0c96B8b423cE6b5cF6EE2846eE6d2a48b4765157</small>
+    </p>
+
+    <div class="row">
+      <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="jumbotron">
+          <h3 class="text-center">Europe 1 / London</h3>
+
+          <div class="nodeinfo" data-ip="http://eu1.tangleno.de:14265"></div>
+
+          <div class="input-group">
+          <input class='node-ip form-control' id='eu1' value='http://eu1.tangleno.de:14265' readonly />
+
+          <button class="clip btn btn-success input-group-addon" data-clipboard-target="#eu1">
+            Copy
+          </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script
+			  src="https://code.jquery.com/jquery-3.2.1.min.js"
+			  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+			  crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js" integrity="sha256-N4u5BjTLNwmGul6RgLoESPNqDFVUibVuOYhP4gJgrew=" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
+  <script src="iota.min.js"></script>
+  <script src="main.js"></script>
+
+  <script>
+    new Clipboard('.clip');
+  </script>
+</body>
+</html>

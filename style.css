@@ -1,0 +1,19 @@
+.header {
+  text-align: center;
+}
+
+.subheader {
+  text-align: center;
+}
+
+.eukaryote {
+  color: #90A080;
+}
+
+.jumbotron{
+    width: 100%;
+}
+
+.nodeinfo {
+  margin-left: 10px;
+}
