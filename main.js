@@ -5,6 +5,7 @@ for (table of $(".nodeinfo")) {
   var cont = "<p>"
   cont += "<b class='node-data'>Sync: </b><span class='sync" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += "<b class='node-data'>Tips: </b><span class='tips" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b class='node-data'>Neighbors: </b><span class='nbs" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += "<b class='node-data'>CPU Cores: </b><span class='cpu" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += "<b class='node-data'>RAM Usage: </b><span class='ram" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += "<b class='node-data'>CPU Usage: </b><span class='cputil" + uniqueClass(table.dataset.ip) + "'></span></br>"
@@ -29,6 +30,7 @@ updatedata = function(first) {
     iota.api.getNodeInfo(function(err, res) {
       $(".sync" + uniqueClass(nodeip)).html(res.latestSolidSubtangleMilestoneIndex + " / " + res.latestMilestoneIndex)
       $(".tips" + uniqueClass(nodeip)).html(res.tips)
+      $(".nbs" + uniqueClass(nodeip)).html(res.neighbors)
       $(".cpu" + uniqueClass(nodeip)).html(res.jreAvailableProcessors)
       $(".ram" + uniqueClass(nodeip)).html(humanFileSize(res.jreTotalMemory, true) + " / " + humanFileSize(res.jreMaxMemory, true))
     })
