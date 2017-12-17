@@ -8,7 +8,7 @@ for (table of $(".nodeinfo")) {
   cont += "<b>CPU Cores: </b><span class='cpu" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += "<b>RAM Usage: </b><span class='ram" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += "<b>CPU Usage: </b><span class='cputil" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += '<canvas id="nodecpugraph' + uniqueClass(table.dataset.ip) + '" width="400" height="300"></canvas>'
+  cont += '<canvas id="nodecpugraph' + uniqueClass(table.dataset.ip) + '"></canvas>'
   cont += "</p>"
 
   $table.html(cont)
