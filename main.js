@@ -6,7 +6,8 @@ for (table of $(".nodeinfo")) {
   cont += "<b>Sync: </b><span class='sync" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += "<b>Tips: </b><span class='tips" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += "<b>CPU Cores: </b><span class='cpu" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += "<b>RAM Utilization: </b><span class='ram" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b>RAM Usage: </b><span class='ram" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b>CPU Usage: </b><span class='cputil" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += '<canvas id="nodecpugraph' + uniqueClass(table.dataset.ip) + '" width="400" height="300"></canvas>'
   cont += "</p>"
 
@@ -35,6 +36,7 @@ updatedata = function(first) {
 
     console.log(nodeip)
     $.getJSON(nodeip.substring(0, nodeip.lastIndexOf(":")) + ":14222").done(function(data) {
+      $(".cputil" + uniqueClass(nodeip)).html(data[data.length - 1] + "%")
 
       if (first) {
         let ctx = $("#nodecpugraph" + uniqueClass(nodeip))
