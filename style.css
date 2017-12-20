@@ -17,3 +17,11 @@
 .node-data {
   margin-left: 10px;
 }
+
+.node-header {
+  margin-top: -35px;
+}
+
+.node-ip {
+  margin-bottom: -42px;
+}
