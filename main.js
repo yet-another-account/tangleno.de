@@ -17,10 +17,10 @@ for (table of $(".nodeinfo")) {
 
 }
 
-updatedata = function(first) {
-  first = !!first
+function updatedata(table) {
+  return function(first) {
+    first = !!first
 
-  for (table of $(".nodeinfo")) {
     let nodeip = table.dataset.ip
 
     let iota = new IOTA({
@@ -81,8 +81,11 @@ updatedata = function(first) {
     })
   }
 }
-updatedata(true)
-setInterval(updatedata, 5000)
+
+for (table of $(".nodeinfo")) {
+  setTimeout(updatedata(table)(true), 10)
+  setInterval(updatedata(table), 5000)
+}
 
 function humanFileSize(bytes, si) {
   var thresh = si ? 1000 : 1024;
