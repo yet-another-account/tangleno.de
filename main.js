@@ -27,17 +27,19 @@ function updatedata(table) {
       provider: nodeip
     })
 
-    iota.api.getNodeInfo(function(err, res) {
-      $(".sync" + uniqueClass(nodeip)).html(res.latestSolidSubtangleMilestoneIndex + " / " + res.latestMilestoneIndex)
-      $(".tips" + uniqueClass(nodeip)).html(res.tips)
-      $(".nbs" + uniqueClass(nodeip)).html(res.neighbors)
-      $(".cpu" + uniqueClass(nodeip)).html(res.jreAvailableProcessors)
-      $(".ram" + uniqueClass(nodeip)).html(humanFileSize(res.jreTotalMemory, true) + " / " + humanFileSize(res.jreMaxMemory, true))
-    })
 
 
     console.log(nodeip)
     $.getJSON(nodeip.substring(0, nodeip.lastIndexOf(":")) + ":14222").done(function(data) {
+      cpudata = data.cpu
+      memdata = data.ramused
+      iota.api.getNodeInfo(function(err, res) {
+        $(".sync" + uniqueClass(nodeip)).html(res.latestSolidSubtangleMilestoneIndex + " / " + res.latestMilestoneIndex)
+        $(".tips" + uniqueClass(nodeip)).html(res.tips)
+        $(".nbs" + uniqueClass(nodeip)).html(res.neighbors)
+        $(".cpu" + uniqueClass(nodeip)).html(res.jreAvailableProcessors)
+        $(".ram" + uniqueClass(nodeip)).html(humanFileSize(data.ramtotal * data.ramused / 100, true) + " / " + humanFileSize(data.ramtotal, true))
+      })
       $(".cputil" + uniqueClass(nodeip)).html(data[data.length - 1] + "%")
 
       if (first) {
@@ -51,7 +53,11 @@ function updatedata(table) {
             }),
             datasets: [{
               label: "CPU Utilization",
-              data: data
+              data: cpudata
+            },
+            {
+              label: "Memory Utilization",
+              data: memdata
             }]
           },
           options: {
