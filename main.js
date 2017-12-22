@@ -15,7 +15,7 @@ for (table of $(".nodeinfo")) {
     title="Nodes with more avaliable RAM are faster and more stable."></i>: </b><span class='ram${uniqueClass(table.dataset.ip)}'></span></br>`
   cont += `<b class='node-data'>CPU Usage: </b><span class='cputil${uniqueClass(table.dataset.ip)}'></span></br>`
   cont += `<b class='node-data'>Health <i class='fa fa-question-circle' data-toggle="tooltip"
-    title="An aggregate score of a node's health"></i>: </b><span class='health${uniqueClass(table.dataset.ip)}'></span></br>`
+    title="A dynamically calculated aggregate score of a node's health"></i>: </b><span data-toggle="tooltip" class='health${uniqueClass(table.dataset.ip)}'></span></br>`
   cont += `<b class='node-data'>Connected Wallets <i class='fa fa-question-circle' data-toggle="tooltip"
     title="Picking a less used node will help your transactions confirm faster."></i>: </b><span class='conn${uniqueClass(table.dataset.ip)}'></span></br>`
   cont += '<canvas id="nodecpugraph' + uniqueClass(table.dataset.ip) + '"></canvas>'
@@ -53,14 +53,20 @@ function updatedata(table) {
         $(".cpu" + uniqueClass(nodeip)).html(res.jreAvailableProcessors)
         $(".ram" + uniqueClass(nodeip)).html(humanFileSize(data.ramtotal * data.ramused[data.ramused.length - 1] / 100, true) + " / " + humanFileSize(data.ramtotal, true))
 
-        let health = nodehealth(res.tips, res.neighbors, cpudata[cpudata.length - 1], res.jreAvailableProcessors, data.ramtotal, data.connections,
-          !(res.latestSolidSubtangleMilestoneIndex != res.latestMilestoneIndex || res.latestSolidSubtangleMilestoneIndex == firstmilestone))
-        $(".health" + uniqueClass(nodeip)).html(`<b>${health.toPrecision(3)}</b>`)
+        // dont update health when milestone updates to prevent health from breifly dropping to 0
+        if (res.latestMilestoneIndex - res.latestSolidSubtangleMilestoneIndex != 1) {
+          let health = nodehealth(res.tips, res.neighbors, cpudata[cpudata.length - 1], res.jreAvailableProcessors, data.ramtotal, data.connections,
+            !(res.latestSolidSubtangleMilestoneIndex != res.latestMilestoneIndex || res.latestSolidSubtangleMilestoneIndex == firstmilestone))
+          $(".health" + uniqueClass(nodeip)).html(`<b>${health.toPrecision(3)}</b>`)
 
-        var colors = ['#CC0000', '#C82400', '#C44700', '#C06800', '#BC8800', '#B8A700', '#A3B400', '#80B000', '#5DAC00', '#3DA800', '#1DA400', '#00A000']
-        $(".health" + uniqueClass(nodeip)).css({
-          'color': colors[Math.min(Math.floor(health), colors.length - 1)]
-        })
+          var colors = ['#CC0000', '#C82400', '#C44700', '#C06800', '#BC8800', '#B8A700', '#A3B400', '#80B000', '#5DAC00', '#3DA800', '#1DA400', '#00A000']
+          var descriptions = ['Unsynced', 'Overloaded', 'Fair', 'Good', 'Great', 'Excellent']
+          $(".health" + uniqueClass(nodeip)).css({
+            'color': colors[Math.min(Math.floor(health), colors.length - 1)]
+          })
+
+          $(".health" + uniqueClass(nodeip)).attr('data-original-title', descriptions[Math.min(Math.floor(health / 2), descriptions.length - 1)])
+        }
 
         // activate tooltips
         $('[data-toggle="tooltip"]').tooltip()
