@@ -40,6 +40,16 @@ function updatedata(table) {
         $(".nbs" + uniqueClass(nodeip)).html(res.neighbors)
         $(".cpu" + uniqueClass(nodeip)).html(res.jreAvailableProcessors)
         $(".ram" + uniqueClass(nodeip)).html(humanFileSize(data.ramtotal * data.ramused[data.ramused.length - 1] / 100, true) + " / " + humanFileSize(data.ramtotal, true))
+
+        if (res.latestSolidSubtangleMilestoneIndex != res.latestMilestoneIndex || res.latestSolidSubtangleMilestoneIndex == 243000) {
+          $(".sync" + uniqueClass(nodeip)).css({
+            'color': 'darkred'
+          })
+        } else {
+          $(".sync" + uniqueClass(nodeip)).css({
+            'color': 'black'
+          })
+        }
       })
       $(".cputil" + uniqueClass(nodeip)).html(cpudata[cpudata.length - 1] + "%")
       $(".conn" + uniqueClass(nodeip)).html(data.connections)
@@ -102,6 +112,8 @@ function updatedata(table) {
 
     })
   }
+
+
 }
 
 for (table of $(".nodeinfo")) {
