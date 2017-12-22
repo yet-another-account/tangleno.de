@@ -75,12 +75,14 @@ function updatedata(table) {
         if(charts[nodeip].data.labels.length >= 20) {
           charts[nodeip].data.labels.shift()
           charts[nodeip].data.datasets[0]['data'].shift()
+          charts[nodeip].data.datasets[1]['data'].shift()
           charts[nodeip].update()
         }
 
         charts[nodeip].data.labels.push(charts[nodeip].data
           .labels[charts[nodeip].data.labels.length - 1] + 1)
-        charts[nodeip].data.datasets[0]['data'].push(data[data.length - 1])
+        charts[nodeip].data.datasets[0]['data'].push(cpudata[data.length - 1])
+        charts[nodeip].data.datasets[1]['data'].push(memdata[data.length - 1])
         charts[nodeip].update()
       }
 
