@@ -38,7 +38,7 @@ function updatedata(table) {
         $(".tips" + uniqueClass(nodeip)).html(res.tips)
         $(".nbs" + uniqueClass(nodeip)).html(res.neighbors)
         $(".cpu" + uniqueClass(nodeip)).html(res.jreAvailableProcessors)
-        $(".ram" + uniqueClass(nodeip)).html(humanFileSize(data.ramtotal * data.ramused / 100, true) + " / " + humanFileSize(data.ramtotal, true))
+        $(".ram" + uniqueClass(nodeip)).html(humanFileSize(data.ramtotal * data.ramused[data.ramused.length - 1] / 100, true) + " / " + humanFileSize(data.ramtotal, true))
       })
       $(".cputil" + uniqueClass(nodeip)).html(data[data.length - 1] + "%")
 
@@ -52,11 +52,11 @@ function updatedata(table) {
               return i;
             }),
             datasets: [{
-              label: "CPU Utilization",
+              label: "CPU",
               data: cpudata
             },
             {
-              label: "Memory Utilization",
+              label: "Memory",
               data: memdata
             }]
           },
