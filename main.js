@@ -9,6 +9,7 @@ for (table of $(".nodeinfo")) {
   cont += "<b class='node-data'>CPU Cores: </b><span class='cpu" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += "<b class='node-data'>RAM Usage: </b><span class='ram" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += "<b class='node-data'>CPU Usage: </b><span class='cputil" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += "<b class='node-data'>Connected Wallets: </b><span class='conn" + uniqueClass(table.dataset.ip) + "'></span></br>"
   cont += '<canvas id="nodecpugraph' + uniqueClass(table.dataset.ip) + '"></canvas>'
   cont += "</p>"
 
@@ -40,7 +41,8 @@ function updatedata(table) {
         $(".cpu" + uniqueClass(nodeip)).html(res.jreAvailableProcessors)
         $(".ram" + uniqueClass(nodeip)).html(humanFileSize(data.ramtotal * data.ramused[data.ramused.length - 1] / 100, true) + " / " + humanFileSize(data.ramtotal, true))
       })
-      $(".cputil" + uniqueClass(nodeip)).html(data[data.length - 1] + "%")
+      $(".cputil" + uniqueClass(nodeip)).html(cpudata[cpudata.length - 1] + "%")
+      $(".conn" + uniqueClass(nodeip)).html(data.connections)
 
       if (first) {
         let ctx = $("#nodecpugraph" + uniqueClass(nodeip))
@@ -48,15 +50,17 @@ function updatedata(table) {
         let chart = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: Array.apply(null, Array(data.length)).map(function(_, i) {
+            labels: Array.apply(null, Array(cpudata.length)).map(function(_, i) {
               return i;
             }),
             datasets: [{
               label: "CPU",
+              backgroundColor: "#A2000060",
               data: cpudata
             },
             {
               label: "Memory",
+              backgroundColor: "#0051A560",
               data: memdata
             }]
           },
@@ -64,6 +68,14 @@ function updatedata(table) {
             scales: {
               xAxes: [{
                 display: false
+              }],
+              yAxes: [{
+                display: true,
+                ticks: {
+                  beginAtZero: true,
+                  stepSize: 20,
+                  max: 100
+                }
               }]
             }
           }
@@ -71,7 +83,6 @@ function updatedata(table) {
 
         charts[nodeip] = chart
       } else {
-
         if(charts[nodeip].data.labels.length >= 20) {
           charts[nodeip].data.labels.shift()
           charts[nodeip].data.datasets[0]['data'].shift()
@@ -79,10 +90,13 @@ function updatedata(table) {
           charts[nodeip].update()
         }
 
+        if (cpudata.length < 20 || memdata.length < 20) {
+
+        }
         charts[nodeip].data.labels.push(charts[nodeip].data
           .labels[charts[nodeip].data.labels.length - 1] + 1)
-        charts[nodeip].data.datasets[0]['data'].push(cpudata[data.length - 1])
-        charts[nodeip].data.datasets[1]['data'].push(memdata[data.length - 1])
+        charts[nodeip].data.datasets[0]['data'].push(cpudata[cpudata.length - 1])
+        charts[nodeip].data.datasets[1]['data'].push(memdata[memdata.length - 1])
         charts[nodeip].update()
       }
 
