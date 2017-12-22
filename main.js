@@ -14,6 +14,8 @@ for (table of $(".nodeinfo")) {
   cont += `<b class='node-data'>RAM Usage <i class='fa fa-question-circle' data-toggle="tooltip"
     title="Nodes with more avaliable RAM are faster and more stable."></i>: </b><span class='ram${uniqueClass(table.dataset.ip)}'></span></br>`
   cont += `<b class='node-data'>CPU Usage: </b><span class='cputil${uniqueClass(table.dataset.ip)}'></span></br>`
+  cont += `<b class='node-data'>Health <i class='fa fa-question-circle' data-toggle="tooltip"
+    title="An aggregate score of a node's health"></i>: </b><span class='health${uniqueClass(table.dataset.ip)}'></span></br>`
   cont += `<b class='node-data'>Connected Wallets <i class='fa fa-question-circle' data-toggle="tooltip"
     title="Picking a less used node will help your transactions confirm faster."></i>: </b><span class='conn${uniqueClass(table.dataset.ip)}'></span></br>`
   cont += '<canvas id="nodecpugraph' + uniqueClass(table.dataset.ip) + '"></canvas>'
@@ -24,6 +26,7 @@ for (table of $(".nodeinfo")) {
 
 }
 
+const firstmilestone = 243000
 function updatedata(table) {
   return function(first) {
     first = !!first
@@ -49,10 +52,20 @@ function updatedata(table) {
         $(".nbs" + uniqueClass(nodeip)).html(res.neighbors)
         $(".cpu" + uniqueClass(nodeip)).html(res.jreAvailableProcessors)
         $(".ram" + uniqueClass(nodeip)).html(humanFileSize(data.ramtotal * data.ramused[data.ramused.length - 1] / 100, true) + " / " + humanFileSize(data.ramtotal, true))
+
+        let health = nodehealth(res.tips, res.neighbors, cpudata[cpudata.length - 1], res.jreAvailableProcessors, data.ramtotal, data.connections,
+          !(res.latestSolidSubtangleMilestoneIndex != res.latestMilestoneIndex || res.latestSolidSubtangleMilestoneIndex == firstmilestone))
+        $(".health" + uniqueClass(nodeip)).html(`<b>${health.toPrecision(3)}</b>`)
+
+        var colors = ['#CC0000', '#C82400', '#C44700', '#C06800', '#BC8800', '#B8A700', '#A3B400', '#80B000', '#5DAC00', '#3DA800', '#1DA400', '#00A000']
+        $(".health" + uniqueClass(nodeip)).css({
+          'color': colors[Math.min(Math.floor(health), colors.length - 1)]
+        })
+
         // activate tooltips
         $('[data-toggle="tooltip"]').tooltip()
 
-        if (res.latestSolidSubtangleMilestoneIndex != res.latestMilestoneIndex || res.latestSolidSubtangleMilestoneIndex == 243000) {
+        if (res.latestSolidSubtangleMilestoneIndex != res.latestMilestoneIndex || res.latestSolidSubtangleMilestoneIndex == firstmilestone) {
           $(".sync" + uniqueClass(nodeip)).css({
             'color': 'darkred'
           })
@@ -144,6 +157,45 @@ function humanFileSize(bytes, si) {
     ++u;
   } while (Math.abs(bytes) >= thresh && u < units.length - 1);
   return bytes.toFixed(2) + ' ' + units[u];
+}
+
+function nodehealth(tips, neighbors, cpupct, cpus, ramtotal, wallets, synced) {
+  if (!synced) {
+    return 0
+  }
+
+  let tiphealth = Math.log(tips + 1) * 5
+
+  if (tips < 1000) {
+    tiphealth = -10
+  } else if (tips < 2000) {
+    tiphealth *= 0.5
+    tiphealth -= 5
+  } else if (tips < 4000) {
+    tiphealth *= 0.9
+  }
+
+  let neighborhealth = neighbors * 1.0
+
+  if (neighbors > 5) {
+    neighborhealth += (neighbors - 5) * 0.5
+  }
+
+  if (neighbors > 10) {
+    neighborhealth += (neighbors - 10) * -0.4
+  }
+
+  let wallethealth = wallets * -0.1
+
+  let cpuhealth = cpus * 8 * (1.1 - cpupct / 100)
+
+  // work with gb
+  ramtotal /= 1000000000
+  console.log(ramtotal)
+  let ramhealth = ((ramtotal < 4) ? 2.5 : 4) * Math.min(ramtotal, 30)
+
+  console.log(tiphealth + ' ' + neighborhealth + ' ' + wallethealth + ' ' + cpuhealth + ' ' + ramhealth)
+  return (tiphealth + neighborhealth + wallethealth + cpuhealth + ramhealth) * 0.1
 }
 
 function uniqueClass(addr) {
