@@ -35,7 +35,7 @@ function updatedata(table) {
       cpudata = data.cpu
       memdata = data.ramused
       iota.api.getNodeInfo(function(err, res) {
-        $(".sync" + uniqueClass(nodeip)).html(res.latestSolidSubtangleMilestoneIndex + " / " + res.latestMilestoneIndex)
+        $(".sync" + uniqueClass(nodeip)).html('<b>' + res.latestSolidSubtangleMilestoneIndex + "</b> / " + res.latestMilestoneIndex)
         $(".tips" + uniqueClass(nodeip)).html(res.tips)
         $(".nbs" + uniqueClass(nodeip)).html(res.neighbors)
         $(".cpu" + uniqueClass(nodeip)).html(res.jreAvailableProcessors)
