@@ -3,13 +3,19 @@ for (table of $(".nodeinfo")) {
   let $table = $(table)
 
   var cont = "<p>"
-  cont += "<b class='node-data'>Sync: </b><span class='sync" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += "<b class='node-data'>Tips: </b><span class='tips" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += "<b class='node-data'>Neighbors: </b><span class='nbs" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += "<b class='node-data'>CPU Cores: </b><span class='cpu" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += "<b class='node-data'>RAM Usage: </b><span class='ram" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += "<b class='node-data'>CPU Usage: </b><span class='cputil" + uniqueClass(table.dataset.ip) + "'></span></br>"
-  cont += "<b class='node-data'>Connected Wallets: </b><span class='conn" + uniqueClass(table.dataset.ip) + "'></span></br>"
+  cont += `<b class='node-data'>Sync <i class='fa fa-question-circle' data-toggle="tooltip"
+    title="A node will only work properly if it is in sync. "></i>: </b><span class='sync${uniqueClass(table.dataset.ip)}'></span></br>`
+  cont += `<b class='node-data'>Tips <i class='fa fa-question-circle' data-toggle="tooltip"
+    title="Nodes with more tips have a higher confirmation rate. "></i>: </b><span class='tips${uniqueClass(table.dataset.ip)}'></span></br>`
+  cont += `<b class='node-data'>Neighbors <i class='fa fa-question-circle' data-toggle="tooltip"
+    title="Nodes with more neighbors propagate transactions faster."></i>: </b><span class='nbs${uniqueClass(table.dataset.ip)}'></span></br>`
+  cont += `<b class='node-data'>CPU Cores <i class='fa fa-question-circle' data-toggle="tooltip"
+    title="Nodes with more cores can handle more users simultaenously"></i>: </b><span class='cpu${uniqueClass(table.dataset.ip)}'></span></br>`
+  cont += `<b class='node-data'>RAM Usage <i class='fa fa-question-circle' data-toggle="tooltip"
+    title="Nodes with more avaliable RAM are faster and more stable."></i>: </b><span class='ram${uniqueClass(table.dataset.ip)}'></span></br>`
+  cont += `<b class='node-data'>CPU Usage: </b><span class='cputil${uniqueClass(table.dataset.ip)}'></span></br>`
+  cont += `<b class='node-data'>Connected Wallets <i class='fa fa-question-circle' data-toggle="tooltip"
+    title="Picking a less used node will help your transactions confirm faster."></i>: </b><span class='conn${uniqueClass(table.dataset.ip)}'></span></br>`
   cont += '<canvas id="nodecpugraph' + uniqueClass(table.dataset.ip) + '"></canvas>'
   cont += "</p>"
 
@@ -35,11 +41,16 @@ function updatedata(table) {
       cpudata = data.cpu
       memdata = data.ramused
       iota.api.getNodeInfo(function(err, res) {
-        $(".sync" + uniqueClass(nodeip)).html('<b>' + res.latestSolidSubtangleMilestoneIndex + "</b> / " + res.latestMilestoneIndex)
+        $(".sync" + uniqueClass(nodeip)).html(
+          `<b><a data-toggle="tooltip" title="Solid (Synced) Milestone">
+          ${res.latestSolidSubtangleMilestoneIndex}</a></b> /
+          <a data-toggle="tooltip" title="Latest Milestone">${res.latestMilestoneIndex}</a>`)
         $(".tips" + uniqueClass(nodeip)).html(res.tips)
         $(".nbs" + uniqueClass(nodeip)).html(res.neighbors)
         $(".cpu" + uniqueClass(nodeip)).html(res.jreAvailableProcessors)
         $(".ram" + uniqueClass(nodeip)).html(humanFileSize(data.ramtotal * data.ramused[data.ramused.length - 1] / 100, true) + " / " + humanFileSize(data.ramtotal, true))
+        // activate tooltips
+        $('[data-toggle="tooltip"]').tooltip()
 
         if (res.latestSolidSubtangleMilestoneIndex != res.latestMilestoneIndex || res.latestSolidSubtangleMilestoneIndex == 243000) {
           $(".sync" + uniqueClass(nodeip)).css({
@@ -138,3 +149,7 @@ function humanFileSize(bytes, si) {
 function uniqueClass(addr) {
   return addr.replace(/[\W]+/g, "_")
 }
+
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip()
+})
